@@ -71,6 +71,28 @@ type SceneConfig struct {
 	Boids         BoidsConfig         `toml:"boids"`
 	Plasma        PlasmaConfig        `toml:"plasma"`
 	Bonsai        BonsaiConfig        `toml:"bonsai"`
+	SyncRate      SyncRateConfig      `toml:"syncrate"`
+	Helix         HelixConfig         `toml:"helix"`
+	Gene          GeneConfig          `toml:"gene"`
+}
+
+type SyncRateConfig struct {
+	Speed       float64 `toml:"speed"`        // scroll speed multiplier
+	Volatility  float64 `toml:"volatility"`   // per-step jitter magnitude
+	SpikeChance float64 `toml:"spike_chance"` // probability per column of a sharp spike
+	Label       string  `toml:"label"`        // text label shown before the percentage
+}
+
+type HelixConfig struct {
+	Speed     float64 `toml:"speed"`     // strand rotation speed multiplier
+	Amplitude float64 `toml:"amplitude"` // 0.0-1.0, how wide the braid swings
+	Label     string  `toml:"label"`     // header box text, e.g. "EVA-01"
+	Subject   string  `toml:"subject"`   // header subject line
+}
+
+type GeneConfig struct {
+	Speed float64 `toml:"speed"` // chevron scroll + label drift speed multiplier
+	Label string  `toml:"label"` // borderline caption text
 }
 
 type BonsaiConfig struct {
@@ -227,6 +249,22 @@ func Default() *Config {
 				PauseSeconds: 6.0,
 				FadeSeconds:  2.5,
 				Speed:        1.0,
+			},
+			SyncRate: SyncRateConfig{
+				Speed:       1.0,
+				Volatility:  0.5,
+				SpikeChance: 0.03,
+				Label:       "SYNC RATIO",
+			},
+			Helix: HelixConfig{
+				Speed:     1.0,
+				Amplitude: 0.92,
+				Label:     "EVA-01",
+				Subject:   "PILOT",
+			},
+			Gene: GeneConfig{
+				Speed: 1.0,
+				Label: "BORDERLINE",
 			},
 		},
 	}
