@@ -228,6 +228,24 @@ var Themes = map[string]Theme{
 		},
 		Bright: RGBColor{224, 222, 244},
 	},
+	// eva: green/orange/red NERV-terminal palette, built for the
+	// helix/gene/synapse scenes. #00ff9d, #0f5c3d, #ff8c1a, #ff3b3b.
+	"eva": {
+		Name: "eva",
+		Palette: []RGBColor{
+			{0, 255, 157},
+			{15, 92, 61},
+			{255, 140, 26},
+			{255, 59, 59},
+		},
+		Dim: []RGBColor{
+			{0, 77, 41},
+			{6, 40, 24},
+			{77, 38, 0},
+			{61, 0, 0},
+		},
+		Bright: RGBColor{255, 140, 26},
+	},
 }
 
 func ThemeNames() []string {

@@ -74,6 +74,7 @@ type SceneConfig struct {
 	SyncRate      SyncRateConfig      `toml:"syncrate"`
 	Helix         HelixConfig         `toml:"helix"`
 	Gene          GeneConfig          `toml:"gene"`
+	Synapse       SynapseConfig       `toml:"synapse"`
 }
 
 type SyncRateConfig struct {
@@ -93,6 +94,12 @@ type HelixConfig struct {
 type GeneConfig struct {
 	Speed float64 `toml:"speed"` // chevron scroll + label drift speed multiplier
 	Label string  `toml:"label"` // borderline caption text
+}
+
+// SynapseConfig has one knob — how fast the top ticker scrolls. The
+// artwork itself is static and has nothing else to tune.
+type SynapseConfig struct {
+	Speed float64 `toml:"speed"` // ticker scroll speed multiplier
 }
 
 type BonsaiConfig struct {
@@ -265,6 +272,9 @@ func Default() *Config {
 			Gene: GeneConfig{
 				Speed: 1.0,
 				Label: "BORDERLINE",
+			},
+			Synapse: SynapseConfig{
+				Speed: 1.0,
 			},
 		},
 	}
