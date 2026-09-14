@@ -20,6 +20,7 @@ import (
 	"github.com/phlx0/drift/internal/scene/starfield"
 	"github.com/phlx0/drift/internal/scene/synapse"
 	"github.com/phlx0/drift/internal/scene/syncrate"
+	"github.com/phlx0/drift/internal/scene/tubes"
 	"github.com/phlx0/drift/internal/scene/waveform"
 )
 
@@ -41,8 +42,9 @@ func All(cfg config.SceneConfig) []scene.Scene {
 		bonsai.New(cfg.Bonsai),
 		syncrate.New(cfg.SyncRate),
 		helix.New(cfg.Helix),
-		synapse.New(cfg.Synapse),
+		tubes.New(cfg.Tubes),
 		gene.New(cfg.Gene),
+		synapse.New(cfg.Synapse),
 	}
 }
 

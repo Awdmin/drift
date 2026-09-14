@@ -73,6 +73,7 @@ type SceneConfig struct {
 	Bonsai        BonsaiConfig        `toml:"bonsai"`
 	SyncRate      SyncRateConfig      `toml:"syncrate"`
 	Helix         HelixConfig         `toml:"helix"`
+	Tubes         TubesConfig         `toml:"tubes"`
 	Gene          GeneConfig          `toml:"gene"`
 	Synapse       SynapseConfig       `toml:"synapse"`
 }
@@ -89,6 +90,17 @@ type HelixConfig struct {
 	Amplitude float64 `toml:"amplitude"` // 0.0-1.0, how wide the braid swings
 	Label     string  `toml:"label"`     // header box text, e.g. "EVA-01"
 	Subject   string  `toml:"subject"`   // header subject line
+}
+
+// TubesConfig is a from-scratch alternative to helix — 9 tight
+// wireframe tubes with continuous ring cross-braces, built after direct
+// pixel analysis of the reference footage. Independent of helix; both
+// can be compared side by side.
+type TubesConfig struct {
+	Speed     float64 `toml:"speed"`
+	Amplitude float64 `toml:"amplitude"`
+	Label     string  `toml:"label"`
+	Subject   string  `toml:"subject"`
 }
 
 type GeneConfig struct {
@@ -264,6 +276,12 @@ func Default() *Config {
 				Label:       "SYNC RATIO",
 			},
 			Helix: HelixConfig{
+				Speed:     1.0,
+				Amplitude: 0.92,
+				Label:     "EVA-01",
+				Subject:   "PILOT",
+			},
+			Tubes: TubesConfig{
 				Speed:     1.0,
 				Amplitude: 0.92,
 				Label:     "EVA-01",

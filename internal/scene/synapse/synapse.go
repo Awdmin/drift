@@ -1,17 +1,20 @@
 // Package synapse renders a static, faithful pixel-art reproduction of
-// the SYNAPSE-L/R reference image, framed by two narrow side columns of
-// vertically-scrolling technical labels — reusing the label set from an
-// earlier procedural version of this scene (SYNAPSE-L, SGL 00, AXON
-// CELL-B, etc.). The art itself deliberately isn't procedural — the
-// reference is a detailed illustration, not a repeating geometric
-// pattern, so the only way to actually look like it is to reproduce its
-// actual pixels (quantized at native resolution ahead of time; see
-// bitmap_data.go) rather than generate an approximation at runtime.
+// the SYNAPSE-L/R reference image, with two narrow columns of
+// vertically-scrolling technical labels overlaid on the outer edges —
+// reusing the label set from an earlier procedural version of this
+// scene (SYNAPSE-L, SGL 00, AXON CELL-B, etc.). The art itself
+// deliberately isn't procedural — the reference is a detailed
+// illustration, not a repeating geometric pattern, so the only way to
+// actually look like it is to reproduce its actual pixels (quantized at
+// native resolution ahead of time; see bitmap_data.go) rather than
+// generate an approximation at runtime.
 //
-// The side margins double as a deliberate crop: the source image's own
-// label text already runs off the left/right edges of the frame, so
-// giving those columns to our own scrolling labels instead loses
-// nothing that wasn't already clipped in the original.
+// The art renders at full width, connector-stub prongs and all — the
+// scrolling labels are drawn on top of it afterward in the outer
+// columns, not cropped into a separate margin. That matches the
+// reference itself: its label text sits in the same column space as
+// where those connector lines terminate, not off to the side of the
+// picture.
 //
 // Art rendering uses braille sub-pixel cells (2x4 dots per character),
 // the same technique the helix and gene scenes use — this gives 8
@@ -31,8 +34,8 @@ import (
 	"github.com/phlx0/drift/internal/scene"
 )
 
-// marginCols is how many columns each side margin claims for its
-// scrolling label ticker; the art fills whatever's left in the middle.
+// marginCols is how many columns each side label ticker occupies,
+// overlaid on top of the full-width art rather than carved out of it.
 const marginCols = 14
 
 // labelSpacingRows is the vertical gap (in rows) between successive
@@ -130,24 +133,28 @@ func (sy *Synapse) Draw(screen tcell.Screen) {
 		return
 	}
 
+	// Render the art at full width first — prongs/connector stubs and
+	// all, uncropped — then draw the scrolling labels on top of it in
+	// the outer columns. This is what the reference actually does: the
+	// label text sits in the same column space as where those connector
+	// lines terminate, not off in a separate margin beside the picture.
+	sy.drawArt(screen, 0, sy.w)
+
 	margin := marginCols
-	// On narrow terminals, shrink the margins rather than let them eat
-	// the whole width — always leave at least 20 columns for the art.
-	for margin > 0 && sy.w-2*margin < 20 {
+	for margin > 0 && sy.w < margin*2+10 {
 		margin--
 	}
-
 	if margin > 0 {
 		sy.drawSideColumn(screen, 0, margin, leftLabels, false)
 		sy.drawSideColumn(screen, sy.w-margin, margin, rightLabels, true)
 	}
-
-	sy.drawArt(screen, margin, sy.w-margin)
 }
 
-// drawSideColumn renders one vertically-scrolling label ticker into the
-// column range [x0, x0+width). rightAlign controls whether each label
-// hugs the inner (art-facing) or outer edge of its column.
+// drawSideColumn overlays one vertically-scrolling label ticker on top
+// of the art already drawn in the column range [x0, x0+width) — cells
+// with no active label this row are left untouched, showing the art
+// underneath. rightAlign controls whether each label hugs the inner
+// (art-facing) or outer edge of its column.
 func (sy *Synapse) drawSideColumn(screen tcell.Screen, x0, width int, labels []string, rightAlign bool) {
 	if width <= 0 || len(labels) == 0 {
 		return
@@ -161,7 +168,7 @@ func (sy *Synapse) drawSideColumn(screen tcell.Screen, x0, width int, labels []s
 	for cy := 0; cy < sy.h; cy++ {
 		virtualRow := (cy + scroll) % cycle
 		if virtualRow%labelSpacingRows != 0 {
-			continue // blank spacing row between labels
+			continue // no label this row — leave the art showing
 		}
 		label := labels[virtualRow/labelSpacingRows]
 		if len(label) > width {
@@ -181,9 +188,11 @@ func (sy *Synapse) drawSideColumn(screen tcell.Screen, x0, width int, labels []s
 	}
 }
 
-// drawArt renders the pixel-art bitmap into the column range [x0, x1),
-// full height — kept as its own function so the side margins can be
-// tuned independently of how the art itself is sampled and drawn.
+// drawArt renders the pixel-art bitmap into the column range [x0, x1) —
+// normally the full screen width, kept as its own function so the art
+// sampling stays independent of whatever gets drawn on top of it
+// afterward (currently just the label overlay, but this is where any
+// other overlay would hook in too).
 func (sy *Synapse) drawArt(screen tcell.Screen, x0, x1 int) {
 	artCols := x1 - x0
 	if artCols < 1 {
