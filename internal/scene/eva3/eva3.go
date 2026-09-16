@@ -1,4 +1,4 @@
-// Package synapse renders a static, faithful pixel-art reproduction of
+// Package eva3 renders a static, faithful pixel-art reproduction of
 // the SYNAPSE-L/R reference image, with two narrow columns of
 // vertically-scrolling technical labels overlaid on the outer edges —
 // reusing the label set from an earlier procedural version of this
@@ -17,13 +17,13 @@
 // picture.
 //
 // Art rendering uses braille sub-pixel cells (2x4 dots per character),
-// the same technique the helix and gene scenes use — this gives 8
+// the same technique the eva1 and eva2 scenes use — this gives 8
 // samples per cell instead of a half-block's 2, so edges and fine
 // linework come through much more crisply. The tradeoff is one color
 // per cell rather than two, decided by majority vote among that cell's
 // non-background samples — a good trade here since most of the image is
 // either black background or a single dominant color region.
-package synapse
+package eva3
 
 import (
 	"math/rand"
@@ -42,7 +42,7 @@ const marginCols = 14
 // labels in a side column's scroll cycle.
 const labelSpacingRows = 4
 
-var tickerColor = scene.RGBColor{230, 140, 70} // matches the reference's orange label text
+var tickerColor = scene.RGBColor{R: 230, G: 140, B: 70} // matches the reference's orange label text
 
 // leftLabels / rightLabels are the original label sets from the earlier
 // procedural version of this scene, now scrolling vertically in the
@@ -50,7 +50,7 @@ var tickerColor = scene.RGBColor{230, 140, 70} // matches the reference's orange
 var leftLabels = []string{"SYNAPSE-L", "SGL 00", "NOR 01", "SENSORY", "ROOT", "SPINAL", "NERVE", "AXON CELL-B"}
 var rightLabels = []string{"SYNAPSE-R", "SGR", "NOR", "SPINAL", "CORD", "PROTO", "TYPE", "EVA-00"}
 
-type Synapse struct {
+type Eva3 struct {
 	w, h int
 	time float64
 	rng  *rand.Rand
@@ -69,67 +69,67 @@ type Synapse struct {
 	cfgSpeed float64
 }
 
-func New(cfg config.SynapseConfig) *Synapse {
-	return &Synapse{cfgSpeed: cfg.Speed}
+func New(cfg config.Eva3Config) *Eva3 {
+	return &Eva3{cfgSpeed: cfg.Speed}
 }
 
-func (sy *Synapse) Name() string { return "synapse" }
+func (e *Eva3) Name() string { return "eva3" }
 
-func (sy *Synapse) Init(w, h int, t scene.Theme) {
-	sy.w, sy.h = w, h
-	sy.rng = rand.New(rand.NewSource(time.Now().UnixNano()))
-	sy.scheduleNextFlicker()
+func (e *Eva3) Init(w, h int, t scene.Theme) {
+	e.w, e.h = w, h
+	e.rng = rand.New(rand.NewSource(time.Now().UnixNano()))
+	e.scheduleNextFlicker()
 }
 
-func (sy *Synapse) Resize(w, h int) {
-	sy.w, sy.h = w, h
+func (e *Eva3) Resize(w, h int) {
+	e.w, e.h = w, h
 }
 
-func (sy *Synapse) Update(dt float64) {
-	speed := sy.cfgSpeed
+func (e *Eva3) Update(dt float64) {
+	speed := e.cfgSpeed
 	if speed <= 0 {
 		speed = 1.0
 	}
-	sy.time += dt * speed
+	e.time += dt * speed
 
-	if sy.rng == nil {
+	if e.rng == nil {
 		return
 	}
 
-	if sy.flickerTimer > 0 {
-		sy.flickerTimer -= dt
+	if e.flickerTimer > 0 {
+		e.flickerTimer -= dt
 	}
-	sy.flickerAcc += dt
-	if sy.flickerTimer <= 0 && sy.flickerAcc >= sy.nextFlickerIn {
-		sy.triggerFlicker()
+	e.flickerAcc += dt
+	if e.flickerTimer <= 0 && e.flickerAcc >= e.nextFlickerIn {
+		e.triggerFlicker()
 	}
 }
 
 // scheduleNextFlicker picks how long to wait before the next flicker —
 // 4 to 12 seconds, so it reads as occasional and irregular rather than
 // a steady pulse.
-func (sy *Synapse) scheduleNextFlicker() {
-	sy.nextFlickerIn = 4 + sy.rng.Float64()*8
-	sy.flickerAcc = 0
+func (e *Eva3) scheduleNextFlicker() {
+	e.nextFlickerIn = 4 + e.rng.Float64()*8
+	e.flickerAcc = 0
 }
 
 // triggerFlicker starts a short burst: either a bright flash or a dim
 // dip, occasionally paired with brief dropout (random cells going
 // blank), like a weak signal cutting in and out.
-func (sy *Synapse) triggerFlicker() {
-	sy.flickerTimer = 0.05 + sy.rng.Float64()*0.12
-	if sy.rng.Float64() < 0.5 {
-		sy.flickerBright = 1.8 + sy.rng.Float64()*0.8
-		sy.flickerDropout = false
+func (e *Eva3) triggerFlicker() {
+	e.flickerTimer = 0.05 + e.rng.Float64()*0.12
+	if e.rng.Float64() < 0.5 {
+		e.flickerBright = 1.8 + e.rng.Float64()*0.8
+		e.flickerDropout = false
 	} else {
-		sy.flickerBright = 0.15 + sy.rng.Float64()*0.25
-		sy.flickerDropout = sy.rng.Float64() < 0.5
+		e.flickerBright = 0.15 + e.rng.Float64()*0.25
+		e.flickerDropout = e.rng.Float64() < 0.5
 	}
-	sy.scheduleNextFlicker()
+	e.scheduleNextFlicker()
 }
 
-func (sy *Synapse) Draw(screen tcell.Screen) {
-	if sy.w <= 0 || sy.h <= 0 {
+func (e *Eva3) Draw(screen tcell.Screen) {
+	if e.w <= 0 || e.h <= 0 {
 		return
 	}
 
@@ -138,15 +138,15 @@ func (sy *Synapse) Draw(screen tcell.Screen) {
 	// the outer columns. This is what the reference actually does: the
 	// label text sits in the same column space as where those connector
 	// lines terminate, not off in a separate margin beside the picture.
-	sy.drawArt(screen, 0, sy.w)
+	e.drawArt(screen, 0, e.w)
 
 	margin := marginCols
-	for margin > 0 && sy.w < margin*2+10 {
+	for margin > 0 && e.w < margin*2+10 {
 		margin--
 	}
 	if margin > 0 {
-		sy.drawSideColumn(screen, 0, margin, leftLabels, false)
-		sy.drawSideColumn(screen, sy.w-margin, margin, rightLabels, true)
+		e.drawSideColumn(screen, 0, margin, leftLabels, false)
+		e.drawSideColumn(screen, e.w-margin, margin, rightLabels, true)
 	}
 }
 
@@ -155,17 +155,17 @@ func (sy *Synapse) Draw(screen tcell.Screen) {
 // with no active label this row are left untouched, showing the art
 // underneath. rightAlign controls whether each label hugs the inner
 // (art-facing) or outer edge of its column.
-func (sy *Synapse) drawSideColumn(screen tcell.Screen, x0, width int, labels []string, rightAlign bool) {
+func (e *Eva3) drawSideColumn(screen tcell.Screen, x0, width int, labels []string, rightAlign bool) {
 	if width <= 0 || len(labels) == 0 {
 		return
 	}
 
 	cycle := len(labels) * labelSpacingRows
-	scroll := int(sy.time*3) % cycle
+	scroll := int(e.time*3) % cycle
 
 	style := tickerColor.Style()
 
-	for cy := 0; cy < sy.h; cy++ {
+	for cy := 0; cy < e.h; cy++ {
 		virtualRow := (cy + scroll) % cycle
 		if virtualRow%labelSpacingRows != 0 {
 			continue // no label this row — leave the art showing
@@ -193,14 +193,14 @@ func (sy *Synapse) drawSideColumn(screen tcell.Screen, x0, width int, labels []s
 // sampling stays independent of whatever gets drawn on top of it
 // afterward (currently just the label overlay, but this is where any
 // other overlay would hook in too).
-func (sy *Synapse) drawArt(screen tcell.Screen, x0, x1 int) {
+func (e *Eva3) drawArt(screen tcell.Screen, x0, x1 int) {
 	artCols := x1 - x0
 	if artCols < 1 {
 		return
 	}
-	pw, ph := artCols*2, sy.h*4
+	pw, ph := artCols*2, e.h*4
 
-	for cy := 0; cy < sy.h; cy++ {
+	for cy := 0; cy < e.h; cy++ {
 		for cx := 0; cx < artCols; cx++ {
 			var mask uint8
 			var counts [16]int
@@ -230,16 +230,16 @@ func (sy *Synapse) drawArt(screen tcell.Screen, x0, x1 int) {
 				}
 			}
 
-			if sy.flickerTimer > 0 {
-				if sy.flickerDropout && sy.rng.Float64() < 0.35 {
+			if e.flickerTimer > 0 {
+				if e.flickerDropout && e.rng.Float64() < 0.35 {
 					continue // brief dropout — this cell goes dark for the frame
 				}
 			}
 
 			p := bitmapPalette[best]
 			color := scene.RGBColor{R: p.R, G: p.G, B: p.B}
-			if sy.flickerTimer > 0 {
-				color = scaleColor(color, sy.flickerBright)
+			if e.flickerTimer > 0 {
+				color = scaleColor(color, e.flickerBright)
 			}
 			screen.SetContent(x0+cx, cy, '\u2800'|rune(mask), nil, color.Style())
 		}

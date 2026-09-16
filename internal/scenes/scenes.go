@@ -8,8 +8,9 @@ import (
 	"github.com/phlx0/drift/internal/scene/clock"
 	"github.com/phlx0/drift/internal/scene/constellation"
 	"github.com/phlx0/drift/internal/scene/dvd"
-	"github.com/phlx0/drift/internal/scene/gene"
-	"github.com/phlx0/drift/internal/scene/helix"
+	"github.com/phlx0/drift/internal/scene/eva1"
+	"github.com/phlx0/drift/internal/scene/eva2"
+	"github.com/phlx0/drift/internal/scene/eva3"
 	"github.com/phlx0/drift/internal/scene/life"
 	"github.com/phlx0/drift/internal/scene/maze"
 	"github.com/phlx0/drift/internal/scene/orrery"
@@ -18,9 +19,6 @@ import (
 	"github.com/phlx0/drift/internal/scene/plasma"
 	"github.com/phlx0/drift/internal/scene/rain"
 	"github.com/phlx0/drift/internal/scene/starfield"
-	"github.com/phlx0/drift/internal/scene/synapse"
-	"github.com/phlx0/drift/internal/scene/syncrate"
-	"github.com/phlx0/drift/internal/scene/tubes"
 	"github.com/phlx0/drift/internal/scene/waveform"
 )
 
@@ -40,11 +38,9 @@ func All(cfg config.SceneConfig) []scene.Scene {
 		boids.New(cfg.Boids),
 		plasma.New(cfg.Plasma),
 		bonsai.New(cfg.Bonsai),
-		syncrate.New(cfg.SyncRate),
-		helix.New(cfg.Helix),
-		tubes.New(cfg.Tubes),
-		gene.New(cfg.Gene),
-		synapse.New(cfg.Synapse),
+		eva1.New(cfg.Eva1),
+		eva2.New(cfg.Eva2),
+		eva3.New(cfg.Eva3),
 	}
 }
 

@@ -71,47 +71,35 @@ type SceneConfig struct {
 	Boids         BoidsConfig         `toml:"boids"`
 	Plasma        PlasmaConfig        `toml:"plasma"`
 	Bonsai        BonsaiConfig        `toml:"bonsai"`
-	SyncRate      SyncRateConfig      `toml:"syncrate"`
-	Helix         HelixConfig         `toml:"helix"`
-	Tubes         TubesConfig         `toml:"tubes"`
-	Gene          GeneConfig          `toml:"gene"`
-	Synapse       SynapseConfig       `toml:"synapse"`
+	Eva1          Eva1Config          `toml:"eva1"`
+	Eva2          Eva2Config          `toml:"eva2"`
+	Eva3          Eva3Config          `toml:"eva3"`
 }
 
-type SyncRateConfig struct {
-	Speed       float64 `toml:"speed"`        // scroll speed multiplier
-	Volatility  float64 `toml:"volatility"`   // per-step jitter magnitude
-	SpikeChance float64 `toml:"spike_chance"` // probability per column of a sharp spike
-	Label       string  `toml:"label"`        // text label shown before the percentage
-}
-
-type HelixConfig struct {
-	Speed     float64 `toml:"speed"`     // strand rotation speed multiplier
-	Amplitude float64 `toml:"amplitude"` // 0.0-1.0, how wide the braid swings
-	Label     string  `toml:"label"`     // header box text, e.g. "EVA-01"
-	Subject   string  `toml:"subject"`   // header subject line
-}
-
-// TubesConfig is a from-scratch alternative to helix — 9 tight
-// wireframe tubes with continuous ring cross-braces, built after direct
-// pixel analysis of the reference footage. Independent of helix; both
-// can be compared side by side.
-type TubesConfig struct {
+// Eva1Config configures the eva1 scene — 9 tight wireframe tubes with
+// continuous ring cross-braces, in the style of the Evangelion
+// sync-graph display.
+type Eva1Config struct {
 	Speed     float64 `toml:"speed"`
 	Amplitude float64 `toml:"amplitude"`
 	Label     string  `toml:"label"`
 	Subject   string  `toml:"subject"`
 }
 
-type GeneConfig struct {
-	Speed float64 `toml:"speed"` // chevron scroll + label drift speed multiplier
+// Eva2Config configures the eva2 scene — a lane-based readout of static
+// diagonal bars with a discrete left-to-right sweep animation, in the
+// style of the Evangelion sequence-display chevrons.
+type Eva2Config struct {
+	Speed float64 `toml:"speed"` // sweep + label drift speed multiplier
 	Label string  `toml:"label"` // borderline caption text
 }
 
-// SynapseConfig has one knob — how fast the top ticker scrolls. The
-// artwork itself is static and has nothing else to tune.
-type SynapseConfig struct {
-	Speed float64 `toml:"speed"` // ticker scroll speed multiplier
+// Eva3Config configures the eva3 scene — a static pixel-art
+// reproduction of the Evangelion SYNAPSE-L/R neural readout, with
+// scrolling side labels and an occasional CRT-style flicker. The
+// artwork itself has no other tunable parameters.
+type Eva3Config struct {
+	Speed float64 `toml:"speed"` // side-label ticker scroll speed multiplier
 }
 
 type BonsaiConfig struct {
@@ -269,29 +257,17 @@ func Default() *Config {
 				FadeSeconds:  2.5,
 				Speed:        1.0,
 			},
-			SyncRate: SyncRateConfig{
-				Speed:       1.0,
-				Volatility:  0.5,
-				SpikeChance: 0.03,
-				Label:       "SYNC RATIO",
-			},
-			Helix: HelixConfig{
+			Eva1: Eva1Config{
 				Speed:     1.0,
 				Amplitude: 0.92,
 				Label:     "EVA-01",
 				Subject:   "PILOT",
 			},
-			Tubes: TubesConfig{
-				Speed:     1.0,
-				Amplitude: 0.92,
-				Label:     "EVA-01",
-				Subject:   "PILOT",
-			},
-			Gene: GeneConfig{
+			Eva2: Eva2Config{
 				Speed: 1.0,
 				Label: "BORDERLINE",
 			},
-			Synapse: SynapseConfig{
+			Eva3: Eva3Config{
 				Speed: 1.0,
 			},
 		},

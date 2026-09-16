@@ -7,6 +7,16 @@ drift uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **eva1** scene — 9 independent wireframe "tubes" weaving across the screen, each a tight bundle of 4-5 lines with a small, constant perpendicular radius tied together by ring cross-braces at regular intervals; built by directly measuring reference footage (pixel sampling, autocorrelation, zoomed crops) rather than tuning by eye; configurable `speed`, `amplitude`, `label`, `subject`
+- **eva2** scene — a lane-based readout of static diagonal bars (measured slope and duty cycle from reference footage) colored by a discrete left-to-right sweep: whole blocks flip from red to green lane by lane, top-to-bottom, lingering with a genuine flicker near the center border before completing and resetting; label lanes carry a scrolling code column with a thin connector spine; configurable `speed`, `label`
+- **eva3** scene — a static pixel-art reproduction of a reference image at native resolution, rendered with braille sub-pixel cells for sharper edges than a half-block renderer; framed by two vertically-scrolling label columns and an occasional CRT-style brightness flicker; configurable `speed`
+
+---
+
 ## [1.2.0] — 2026-09-04
 
 ### Added

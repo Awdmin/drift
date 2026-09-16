@@ -1,7 +1,7 @@
 // Code generated from the SYNAPSE-L/R reference image — DO NOT EDIT BY HAND.
 // Regenerate via the conversion script if the source art changes.
 
-package synapse
+package eva3
 
 const bitmapW = 500
 const bitmapH = 375
